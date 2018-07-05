@@ -11,11 +11,12 @@
 
 #define D_SSID "BORWL 34"
 #define D_PASSWORD "123school"
+#define MQTT_MAX_PACKET_SIZE 256 
 
 #define M_SSID "E34"
 #define M_PASSWORD "AlmostEasy"
 
-#define DEVICE_CONNECTION_STRING "HostName=IoTSchoolHub.azure-devices.net;DeviceId=iotdevice;SharedAccessKey=DQhh0q1Hf5sFw6Sz/UKu8vq1qGD1eEXVJPIT9j1ET4A="
+#define DEVICE_CONNECTION_STRING "HostName=IoTSchoolHub.azure-devices.net;DeviceId=iotdevice;SharedAccessKey=Jc96azpOgk3re2fe1sl6JhsQbCk07M5vWKKu8ceJ8FQ="
 
 #define DEVICE_ID "iotdevice"
 
@@ -66,6 +67,9 @@ void setup() {
     Connection(ssidString, passString);
 
     iotHubClientHandle = IoTHubClient_LL_CreateFromConnectionString(connectionString, MQTT_Protocol);
+    bool traceOn = true;
+    IoTHubClient_LL_SetOption(iotHubClientHandle, "logtrace", &traceOn);
+    
     if (iotHubClientHandle == NULL) { // if hub client handle is failed to create
           Serial.println("Failed on IoTHubClient_CreateFromConnectionString.");
           while (1);
@@ -81,7 +85,6 @@ void setup() {
 }
 
 void loop() {
-    
     if (WiFi.status() != WL_CONNECTED) {
       Connection_Non_Pass();
     } else {
@@ -89,6 +92,9 @@ void loop() {
         Serial.println(temp);
         timeClient.update();
         Serial.println(timeClient.getEpochTime());
+        Temperature_Array[increment] = temp;
+        Ticks_Array[increment] = timeClient.getEpochTime();
+        increment++;
         if (!messagePending && messageSending) {
           char messagePayload[MESSAGE_MAX_LEN];
           readMessage(messageCount, messagePayload, Temperature_Array, Ticks_Array, increment);
@@ -97,12 +103,10 @@ void loop() {
           memset(Ticks_Array, 0, interval_dots);
           messageCount++;
           increment = 0;
-        } else {
-          Temperature_Array[increment] = temp;
-          Ticks_Array[increment] = timeClient.getEpochTime();
-          increment++;
-        }
+          delay(interval);
+        } 
         IoTHubClient_LL_DoWork(iotHubClientHandle);
+        delay(10);
     }
     delay(20);
 }

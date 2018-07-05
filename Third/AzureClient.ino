@@ -14,14 +14,14 @@ static void sendCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result, void *userCon
 }
 
 static void sendMessage(IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle, char *buffer) {
-    IOTHUB_MESSAGE_HANDLE messageHandle = IoTHubMessage_CreateFromByteArray((const unsigned char *)buffer, strlen(buffer));
+     IOTHUB_MESSAGE_HANDLE messageHandle = IoTHubMessage_CreateFromByteArray((const unsigned char *)buffer, strlen(buffer));
     
     if (messageHandle == NULL) {
         Serial.println("Unable to create a new IoTHubMessage.");
     } else {
         MAP_HANDLE properties = IoTHubMessage_Properties(messageHandle);
         
-        //Serial.printf("Sending message: %s.\r\n", buffer);
+        Serial.printf("Sending message: %s.\r\n", buffer);
         
         if (IoTHubClient_LL_SendEventAsync(iotHubClientHandle, messageHandle, sendCallback, NULL) != IOTHUB_CLIENT_OK) {
             Serial.println("Failed to hand over the message to IoTHubClient.");

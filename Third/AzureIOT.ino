@@ -13,12 +13,12 @@ void readCredentials() { //connection string
     int passLength = EEPROMread(passAddr, passString);
     int connectionStringLength = EEPROMread(connectionStringAddr, connectionString);
   
-    strcpy(ssidString, D_SSID);
-    //strcpy(ssidString, M_SSID);
+    //strcpy(ssidString, D_SSID);
+    strcpy(ssidString, M_SSID);
     EEPROMWrite(ssidAddr, ssidString, strlen(ssidString));
   
-    strcpy(passString, D_PASSWORD);
-    //strcpy(passString, M_PASSWORD);
+    //strcpy(passString, D_PASSWORD);
+    strcpy(passString, M_PASSWORD);
     EEPROMWrite(passAddr, passString, strlen(passString));
     
     strcpy(connectionString, DEVICE_CONNECTION_STRING);
